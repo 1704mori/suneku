@@ -36,7 +36,10 @@ namespace snek
     uint32_t m_FoodCount = 0;
     uint32_t m_MaxFoodCount = 5;
 
-    void ProcessInput();
+    using KeyCallbackType = void (*)(GLFWwindow *, int, int, int, int);
+    KeyCallbackType keyCallback;
+
+    void ProcessInput(int key, int action);
     void Update();
     void RenderGameOverScreen();
     void RenderTitleScreen();

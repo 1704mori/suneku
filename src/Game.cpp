@@ -8,6 +8,17 @@ namespace snek
 {
   Game::Game(GLFWwindow *window) : m_Window(window), m_GameOver(false)
   {
+    glfwSetWindowUserPointer(m_Window, this);
+
+    keyCallback = [](GLFWwindow *window, int key, int scancode, int action, int mods)
+    {
+      Game *game = static_cast<Game *>(glfwGetWindowUserPointer(window));
+      if (game)
+      {
+        game->ProcessInput(key, action);
+      }
+    };
+
     logger = new common::Logger("Game", false);
 
     ImGui::CreateContext();
@@ -28,6 +39,8 @@ namespace snek
     double lastFrameTime = glfwGetTime();
     double deltaTime = 0;
 
+    glfwSetKeyCallback(m_Window, keyCallback);
+
     while (!glfwWindowShouldClose(m_Window))
     {
       double currentTime = glfwGetTime();
@@ -35,7 +48,6 @@ namespace snek
       lastFrameTime = currentTime;
       double fps = 1.0 / deltaTime;
 
-      ProcessInput();
       if (!m_GameOver)
       {
         if (deltaTime >= GAME_SPEED)
@@ -61,10 +73,6 @@ namespace snek
           m_Renderer.DrawRectangle(segment.first * m_Settings.GetGridSize(), segment.second * m_Settings.GetGridSize(), m_Settings.GetGridSize(), m_Settings.GetGridSize(), 0x0052D452);
         }
 
-        // std::pair<int, int> foodPos = m_Food.GetPosition();
-        // m_Renderer.DrawRectangle(foodPos.first * m_Settings.GetGridSize(), foodPos.second * m_Settings.GetGridSize(), m_Settings.GetGridSize(), m_Settings.GetGridSize(), 0x00D45252);
-
-        // Draw the food
         for (const auto &foodPos : m_Food.GetPosition())
         {
           m_Renderer.DrawRectangle(foodPos.first * m_Settings.GetGridSize(), foodPos.second * m_Settings.GetGridSize(), m_Settings.GetGridSize(), m_Settings.GetGridSize(), 0x00D45252);
@@ -137,10 +145,37 @@ namespace snek
     ImGui::End();
   }
 
-  void Game::ProcessInput()
+  void Game::ProcessInput(int key, int action)
   {
-    if (glfwGetKey(m_Window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    if (action != GLFW_PRESS)
+      return;
+
+    switch (key)
     {
+    case GLFW_KEY_ESCAPE:
+      glfwSetWindowShouldClose(m_Window, true);
+      break;
+    case GLFW_KEY_UP:
+    case GLFW_KEY_W:
+    case GLFW_KEY_KP_8:
+      m_Snake.ChangeDirection(GLFW_KEY_UP);
+      break;
+    case GLFW_KEY_DOWN:
+    case GLFW_KEY_S:
+    case GLFW_KEY_KP_2:
+      m_Snake.ChangeDirection(GLFW_KEY_DOWN);
+      break;
+    case GLFW_KEY_LEFT:
+    case GLFW_KEY_A:
+    case GLFW_KEY_KP_4:
+      m_Snake.ChangeDirection(GLFW_KEY_LEFT);
+      break;
+    case GLFW_KEY_RIGHT:
+    case GLFW_KEY_D:
+    case GLFW_KEY_KP_6:
+      m_Snake.ChangeDirection(GLFW_KEY_RIGHT);
+      break;
+    case GLFW_KEY_SPACE:
       if (m_GameOver)
       {
         m_Snake.Reset();
@@ -153,28 +188,10 @@ namespace snek
       {
         m_Running = true;
       }
-    }
+      break;
 
-    if (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    {
-      glfwSetWindowShouldClose(m_Window, true);
-    }
-
-    if (glfwGetKey(m_Window, GLFW_KEY_UP) == GLFW_PRESS)
-    {
-      m_Snake.ChangeDirection(GLFW_KEY_UP);
-    }
-    if (glfwGetKey(m_Window, GLFW_KEY_DOWN) == GLFW_PRESS)
-    {
-      m_Snake.ChangeDirection(GLFW_KEY_DOWN);
-    }
-    if (glfwGetKey(m_Window, GLFW_KEY_LEFT) == GLFW_PRESS)
-    {
-      m_Snake.ChangeDirection(GLFW_KEY_LEFT);
-    }
-    if (glfwGetKey(m_Window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-    {
-      m_Snake.ChangeDirection(GLFW_KEY_RIGHT);
+    default:
+      break;
     }
   }
 
