@@ -19,6 +19,9 @@ namespace snek
     Game(GLFWwindow *window);
 
     void Run();
+    void SetMaxFoodCount(uint32_t count) { m_MaxFoodCount = count; }
+    void SetScore(uint32_t score) { m_Score = score; }
+    uint32_t GetScore() const { return m_Score; }
 
   private:
     common::Logger *logger;
@@ -33,8 +36,12 @@ namespace snek
     bool m_Running = false;
     bool m_GameOver = false;
 
+    uint32_t m_Score;
     uint32_t m_FoodCount = 0;
-    uint32_t m_MaxFoodCount = 5;
+    uint32_t m_MaxFoodCount = 7;
+
+    double m_FoodSpawnTimer = 0;
+    const double m_FoodSpawnTime = 1;
 
     using KeyCallbackType = void (*)(GLFWwindow *, int, int, int, int);
     KeyCallbackType keyCallback;

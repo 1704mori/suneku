@@ -28,7 +28,8 @@ namespace snek
     ImGui::StyleColorsDark();
     ImGui_ImplOpenGL3_Init();
 
-    m_Food.Spawn(3);
+    SetMaxFoodCount(1);
+    m_Food.Spawn();
     m_FoodCount = m_Food.GetPosition().size();
 
     logger->info(std::to_string(m_FoodCount) + " food(s) spawned");
@@ -101,7 +102,7 @@ namespace snek
 
   void Game::RenderGameOverScreen()
   {
-    std::string score = "Score: " + std::to_string(m_Snake.GetScore());
+    std::string score = "Score: " + std::to_string(GetScore());
 
     ImVec2 gameOverSize = ImGui::CalcTextSize("Game Over!");
     ImVec2 scoreSize = ImGui::CalcTextSize(score.c_str());
@@ -180,7 +181,7 @@ namespace snek
       {
         m_Snake.Reset();
         m_Food.RemoveAllFood();
-        m_Food.Spawn(3);
+        m_Food.Spawn();
         m_GameOver = false;
       }
 
@@ -209,18 +210,26 @@ namespace snek
       if (m_Snake.GetBody().front() == m_Food.GetPosition()[i])
       {
         m_Snake.Grow();
-        m_Snake.SetScore(m_Snake.GetScore() + 1);
+        SetScore(GetScore() + 1);
 
         m_Food.RemoveFood(i);
         m_FoodCount--;
 
-        if (m_FoodCount < m_MaxFoodCount)
+        if (m_MaxFoodCount == 1)
         {
-          logger->info("Food count is less than max food count, spawning new food");
-          m_Food.Spawn(1);
-          m_FoodCount++;
+          SetMaxFoodCount(5);
         }
       }
+    }
+
+    m_FoodSpawnTimer += GAME_SPEED;
+
+    if (m_FoodCount < m_MaxFoodCount && m_FoodSpawnTimer >= m_FoodSpawnTime)
+    {
+      m_FoodSpawnTimer = 0;
+      logger->info("Food count is less than max food count, spawning new food");
+      m_Food.Spawn();
+      m_FoodCount++;
     }
 
     // Check for game over
