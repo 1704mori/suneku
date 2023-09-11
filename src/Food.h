@@ -12,7 +12,7 @@ namespace snek
   {
   public:
     Food();
-    void Spawn(uint32_t amount = 2);
+    void Spawn();
     void RemoveFood(int index);
     void RemoveAllFood()
     {
@@ -26,10 +26,9 @@ namespace snek
     common::Logger *logger;
 
   private:
-    // std::pair<int, int> m_Position;
-    // vector of pairs
-    std::vector<std::pair<int, int>> m_Position;
     GameSettings &m_Settings = GameSettings::getInstance();
     Snake &m_Snake = Snake::getInstance();
+
+    std::vector<std::pair<int, int>> m_Position;
   };
 }

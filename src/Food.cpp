@@ -16,13 +16,9 @@ namespace snek
         // Spawn();
     }
 
-    void Food::Spawn(uint32_t amount)
+    void Food::Spawn()
     {
-        // int x = std::rand() % (m_Settings.GetWindowHeight() / m_Settings.GetGridSize());
-        // int y = std::rand() % (m_Settings.GetWindowHeight() / m_Settings.GetGridSize());
-        // m_Position = {x, y};
-
-        logger->info("Spawning " + std::to_string(amount) + " food(s)");
+        logger->info("Spawning food...");
 
         int x = std::rand() % (m_Settings.GetWindowWidth() / m_Settings.GetGridSize());
         int y = std::rand() % (m_Settings.GetWindowHeight() / m_Settings.GetGridSize());
@@ -34,17 +30,11 @@ namespace snek
             {
                 logger->info("Food spawned on snake, respawning...");
                 Spawn();
-                break;
+                return;
             }
         }
 
-        // m_Position = {x, y};
-        for (uint32_t i = 0; i < amount; i++)
-        {
-            x = std::rand() % (m_Settings.GetWindowWidth() / m_Settings.GetGridSize());
-            y = std::rand() % (m_Settings.GetWindowHeight() / m_Settings.GetGridSize());
-            m_Position.push_back(std::make_pair(x, y));
-        }
+        m_Position.push_back(std::make_pair(x, y));
     }
 
     void Food::RemoveFood(int index)
