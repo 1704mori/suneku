@@ -27,6 +27,11 @@ namespace common
     }
   }
 
+  void Logger::clear()
+  {
+    std::cout << std::flush;
+  }
+
   void Logger::log(LogLevel level, const std::string &message)
   {
     if (static_cast<int>(level) >= static_cast<int>(minLogLevel))

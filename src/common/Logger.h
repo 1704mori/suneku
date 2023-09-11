@@ -30,6 +30,8 @@ namespace common
     void debug(const std::string &message);
     void trace(const std::string &message);
 
+    void clear();
+
   private:
     static LogLevel minLogLevel;
     std::string name;

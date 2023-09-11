@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Entity.h"
 
 #include "../vendor/imgui/imgui.h"
 #include "../vendor/imgui/imgui_impl_glfw.h"
@@ -28,8 +29,15 @@ namespace snek
     ImGui::StyleColorsDark();
     ImGui_ImplOpenGL3_Init();
 
-    m_Food.Spawn();
-    m_FoodCount = m_Food.GetPosition().size();
+    m_Food = new Entity(EntityType::Food);
+    m_Food->Spawn();
+    m_FoodCount = m_Food->Count();
+
+    m_Pickups = new Entity(EntityType::Pickups);
+    m_Pickups->Spawn();
+
+    // m_Food.Spawn();
+    // m_FoodCount = m_Food.GetPosition().size();
 
     // logger->info(std::to_string(m_FoodCount) + " food(s) spawned");
     // logger->info("Score: " + std::to_string(GetScore()));
@@ -79,9 +87,14 @@ namespace snek
           m_Renderer.DrawRectangle(segment.first * m_Settings.GetGridSize(), segment.second * m_Settings.GetGridSize(), m_Settings.GetGridSize(), m_Settings.GetGridSize(), 0x0052D452);
         }
 
-        for (const auto &foodPos : m_Food.GetPosition())
+        for (const auto &foodPos : m_Food->GetPosition())
         {
-          m_Renderer.DrawRectangle(foodPos.x * m_Settings.GetGridSize(), foodPos.y * m_Settings.GetGridSize(), m_Settings.GetGridSize(), m_Settings.GetGridSize(), 0x00D45252);
+          m_Renderer.DrawRectangle(foodPos.first * m_Settings.GetGridSize(), foodPos.second * m_Settings.GetGridSize(), m_Settings.GetGridSize(), m_Settings.GetGridSize(), 0x00D45252);
+        }
+
+        for (const auto &pickupPos : m_Pickups->GetPosition())
+        {
+          m_Renderer.DrawRectangle(pickupPos.first * m_Settings.GetGridSize(), pickupPos.second * m_Settings.GetGridSize(), m_Settings.GetGridSize(), m_Settings.GetGridSize(), 0x00D4CE52);
         }
       }
       else if (!m_Running)
@@ -185,8 +198,8 @@ namespace snek
       if (m_GameOver)
       {
         m_Snake.Reset();
-        m_Food.RemoveAllFood();
-        m_Food.Spawn();
+        m_Food->RemoveAll();
+        m_Food->Spawn();
         m_GameOver = false;
       }
 
@@ -210,14 +223,14 @@ namespace snek
 
     m_Snake.Move();
 
-    for (uint16_t i = 0; i < m_Food.GetPosition().size(); i++)
+    for (uint16_t i = 0; i < m_Food->GetPosition().size(); i++)
     {
-      if (m_Snake.GetBody().front().first == m_Food.GetPosition()[i].x && m_Snake.GetBody().front().second == m_Food.GetPosition()[i].y)
+      if (m_Snake.GetBody().front().first == m_Food->GetPosition()[i].first && m_Snake.GetBody().front().second == m_Food->GetPosition()[i].second)
       {
         m_Snake.Grow();
         SetScore(GetScore() + 1);
 
-        m_Food.Remove(i);
+        m_Food->Remove(i);
         m_FoodCount--;
 
         if (m_MaxFoodCount == 1)
@@ -233,7 +246,7 @@ namespace snek
     if (m_FoodCount < m_MaxFoodCount && m_FoodSpawnTimer >= m_FoodSpawnTime)
     {
       m_FoodSpawnTimer = 0;
-      m_Food.Spawn();
+      m_Food->Spawn();
       m_FoodCount++;
     }
 
@@ -241,6 +254,7 @@ namespace snek
     if (m_Snake.IsCollision())
     {
       logger->info("Game Over!");
+      logger->clear();
       m_GameOver = true;
     }
   }

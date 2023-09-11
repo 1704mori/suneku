@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Renderer.h"
+#include "Entity.h"
 #include "Snake.h"
-#include "Food.h"
+#include "Renderer.h"
 #include "GameSettings.h"
 
 #include "common/Logger.h"
@@ -31,7 +31,8 @@ namespace snek
     GameSettings &m_Settings = GameSettings::getInstance();
 
     Snake m_Snake;
-    Food m_Food;
+    Entity *m_Food;
+    Entity *m_Pickups;
 
     bool m_Running = false;
     bool m_GameOver = false;
