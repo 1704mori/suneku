@@ -50,15 +50,19 @@ namespace snek
     bool Snake::IsCollision()
     {
         GameSettings &settings = GameSettings::getInstance();
+        const int gridSize = settings.GetGridSize();
+        const int windowWidth = settings.GetWindowWidth();
+        const int windowHeight = settings.GetWindowHeight();
 
-        // Check if the snake collides with the wall or itself
+        // Check if the snake's head is outside the game bounds
         std::pair<int, int> head = m_Body.front();
-        if (head.first < 0 || head.first >= settings.GetWindowWidth() / settings.GetGridSize() ||
-            head.second < 0 || head.second >= settings.GetWindowHeight() / settings.GetGridSize())
+        if (head.first < 0 || head.first >= windowWidth / gridSize ||
+            head.second < 0 || head.second >= windowHeight / gridSize)
         {
             return true; // Wall collision
         }
 
+        // Check if the snake's head collides with its body
         for (size_t i = 1; i < m_Body.size(); ++i)
         {
             if (head == m_Body[i])
@@ -67,19 +71,21 @@ namespace snek
             }
         }
 
-        return false;
+        return false; // No collision
     }
 
     void Snake::ChangeDirection(int newDirection)
     {
         // Prevent the snake from reversing its direction
-        if ((m_Direction == GLFW_KEY_UP && newDirection != GLFW_KEY_DOWN) ||
-            (m_Direction == GLFW_KEY_DOWN && newDirection != GLFW_KEY_UP) ||
-            (m_Direction == GLFW_KEY_LEFT && newDirection != GLFW_KEY_RIGHT) ||
-            (m_Direction == GLFW_KEY_RIGHT && newDirection != GLFW_KEY_LEFT))
+        if (m_Direction == GLFW_KEY_UP && newDirection == GLFW_KEY_DOWN ||
+            m_Direction == GLFW_KEY_DOWN && newDirection == GLFW_KEY_UP ||
+            m_Direction == GLFW_KEY_LEFT && newDirection == GLFW_KEY_RIGHT ||
+            m_Direction == GLFW_KEY_RIGHT && newDirection == GLFW_KEY_LEFT)
         {
-            m_Direction = newDirection;
+            return;
         }
+
+        m_Direction = newDirection;
     }
 
     void Snake::Reset()
