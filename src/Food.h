@@ -1,34 +1,35 @@
 #pragma once
 
-#include <utility>
+#include "common/Entity.h"
 #include "GameSettings.h"
 #include "Snake.h"
 
 #include "common/Logger.h"
 
+#include <utility>
+
 namespace snek
 {
-  class Food
+  class Food : Entity
   {
   public:
     Food();
-    void Spawn();
-    void RemoveFood(int index);
-    void RemoveAllFood()
-    {
-      m_Position.clear();
-      m_Position.shrink_to_fit();
-    }
+    virtual ~Food();
+    virtual void Spawn();
+    virtual void Remove(int index);
+
+    void RemoveAllFood();
 
     // std::pair<int, int> GetPosition() const;
-    std::vector<std::pair<int, int>> GetPosition() const;
+    // std::vector<std::pair<int, int>> GetPosition() const;
+    virtual std::vector<Position> GetPosition() const;
 
-    common::Logger *logger;
+    // common::Logger *logger;
 
   private:
     GameSettings &m_Settings = GameSettings::getInstance();
     Snake &m_Snake = Snake::getInstance();
 
-    std::vector<std::pair<int, int>> m_Position;
+    std::vector<Position> m_Position;
   };
 }

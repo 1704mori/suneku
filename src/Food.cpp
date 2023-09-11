@@ -11,9 +11,14 @@ namespace snek
     Food::Food()
     {
         // Initialize random seed
-        logger = new common::Logger("Food", false);
+        SetLogger(new common::Logger("Food", false));
         std::srand(static_cast<unsigned>(std::time(nullptr)));
         // Spawn();
+    }
+
+    Food::~Food()
+    {
+        delete logger;
     }
 
     void Food::Spawn()
@@ -34,20 +39,25 @@ namespace snek
             }
         }
 
-        m_Position.push_back(std::make_pair(x, y));
+        // m_Position.push_back(std::make_pair(x, y));
+        m_Position.push_back({x, y});
     }
 
-    void Food::RemoveFood(int index)
+    void Food::Remove(int index)
     {
         m_Position.erase(m_Position.begin() + index);
+        
         std::string message = "Food removed at index: " + std::to_string(index);
-        std::string size = "Food size: " + std::to_string(m_Position.size());
-
         logger->info(message);
-        logger->info(size);
     }
 
-    std::vector<std::pair<int, int>> Food::GetPosition() const
+    void Food::RemoveAllFood()
+    {
+        m_Position.clear();
+        m_Position.shrink_to_fit();
+    }
+
+    std::vector<Position> Food::GetPosition() const
     {
         return m_Position;
     }

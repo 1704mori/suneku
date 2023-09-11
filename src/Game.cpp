@@ -28,11 +28,16 @@ namespace snek
     ImGui::StyleColorsDark();
     ImGui_ImplOpenGL3_Init();
 
-    SetMaxFoodCount(1);
     m_Food.Spawn();
     m_FoodCount = m_Food.GetPosition().size();
 
-    logger->info(std::to_string(m_FoodCount) + " food(s) spawned");
+    // logger->info(std::to_string(m_FoodCount) + " food(s) spawned");
+    // logger->info("Score: " + std::to_string(GetScore()));
+    logger->info("Initialized");
+    logger->info("Max food count: " + std::to_string(m_MaxFoodCount));
+    logger->info("Food spawn time: " + std::to_string(m_FoodSpawnTime));
+    logger->info("Food count: " + std::to_string(m_FoodCount));
+    logger->info("Score: " + std::to_string(GetScore()));
   }
 
   void Game::Run()
@@ -76,7 +81,7 @@ namespace snek
 
         for (const auto &foodPos : m_Food.GetPosition())
         {
-          m_Renderer.DrawRectangle(foodPos.first * m_Settings.GetGridSize(), foodPos.second * m_Settings.GetGridSize(), m_Settings.GetGridSize(), m_Settings.GetGridSize(), 0x00D45252);
+          m_Renderer.DrawRectangle(foodPos.x * m_Settings.GetGridSize(), foodPos.y * m_Settings.GetGridSize(), m_Settings.GetGridSize(), m_Settings.GetGridSize(), 0x00D45252);
         }
       }
       else if (!m_Running)
@@ -207,17 +212,18 @@ namespace snek
 
     for (uint16_t i = 0; i < m_Food.GetPosition().size(); i++)
     {
-      if (m_Snake.GetBody().front() == m_Food.GetPosition()[i])
+      if (m_Snake.GetBody().front().first == m_Food.GetPosition()[i].x && m_Snake.GetBody().front().second == m_Food.GetPosition()[i].y)
       {
         m_Snake.Grow();
         SetScore(GetScore() + 1);
 
-        m_Food.RemoveFood(i);
+        m_Food.Remove(i);
         m_FoodCount--;
 
         if (m_MaxFoodCount == 1)
         {
           SetMaxFoodCount(5);
+          logger->info("Max food count is now 5");
         }
       }
     }
@@ -227,7 +233,6 @@ namespace snek
     if (m_FoodCount < m_MaxFoodCount && m_FoodSpawnTimer >= m_FoodSpawnTime)
     {
       m_FoodSpawnTimer = 0;
-      logger->info("Food count is less than max food count, spawning new food");
       m_Food.Spawn();
       m_FoodCount++;
     }

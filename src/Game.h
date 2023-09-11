@@ -36,9 +36,9 @@ namespace snek
     bool m_Running = false;
     bool m_GameOver = false;
 
-    uint32_t m_Score;
+    uint32_t m_Score = 0;
     uint32_t m_FoodCount = 0;
-    uint32_t m_MaxFoodCount = 7;
+    uint32_t m_MaxFoodCount = 1;
 
     double m_FoodSpawnTimer = 0;
     const double m_FoodSpawnTime = 1;
