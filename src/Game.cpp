@@ -92,10 +92,10 @@ namespace snek
           m_Renderer.DrawRectangle(foodPos.first * m_Settings.GetGridSize(), foodPos.second * m_Settings.GetGridSize(), m_Settings.GetGridSize(), m_Settings.GetGridSize(), 0x00D45252);
         }
 
-        for (const auto &pickupPos : m_Pickups->GetPosition())
-        {
-          m_Renderer.DrawRectangle(pickupPos.first * m_Settings.GetGridSize(), pickupPos.second * m_Settings.GetGridSize(), m_Settings.GetGridSize(), m_Settings.GetGridSize(), 0x00D4CE52);
-        }
+        // for (const auto &pickupPos : m_Pickups->GetPosition())
+        // {
+        //   m_Renderer.DrawRectangle(pickupPos.first * m_Settings.GetGridSize(), pickupPos.second * m_Settings.GetGridSize(), m_Settings.GetGridSize(), m_Settings.GetGridSize(), 0x00D4CE52);
+        // }
       }
       else if (!m_Running)
       {
